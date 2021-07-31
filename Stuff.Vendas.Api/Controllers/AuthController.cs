@@ -1,11 +1,10 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Stuff.Vendas.Api.ViewModels;
+using System.Threading.Tasks;
 
 namespace Stuff.Vendas.Api.Controllers
 {
-
     [ApiController]
     [Route("[Controller]")]
     public class AuthController : ControllerBase
@@ -40,5 +39,23 @@ namespace Stuff.Vendas.Api.Controllers
             return BadRequest(result.Errors);
         }
 
+        [HttpPost("entrar")]
+        public async Task<IActionResult> Entrar(LoginViewModel loginViewModel)
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            var result = await _signInManager.PasswordSignInAsync(loginViewModel.Email, loginViewModel.Password, false, true);
+
+            if (result.Succeeded)
+            {
+                return Ok(loginViewModel);
+            }
+
+            if (result.IsLockedOut)
+            {
+                return Unauthorized("Usuário temporariamente bloqueado por tentativas inválidas");
+            }
+            return Unauthorized("Login e/ou senha inválidos");
+        }
     }
 }
