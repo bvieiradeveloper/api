@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Stuff.Vendas.Api.Data;
+using Stuff.Vendas.Api.Extensions;
+
 namespace Stuff.Vendas.Api.Configurations
 {
     public static class IdentityConfiguration
@@ -15,7 +17,8 @@ namespace Stuff.Vendas.Api.Configurations
             services.AddDefaultIdentity<IdentityUser>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddErrorDescriber<IdentityMensagensPortugues>();
 
             return services;
         }
