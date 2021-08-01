@@ -50,7 +50,6 @@ namespace Stuff.Vendas.Api.Configurations
                     ValidIssuer = appSettings.Emissor
                 };
             });
-       
 
             return services;
         }
