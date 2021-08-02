@@ -7,7 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 using Stuff.Vendas.Api.Controllers;
 using Stuff.Vendas.Api.Data;
 using Stuff.Vendas.Api.Extensions;
+using Stuff.Vendas.Domain.Interfaces;
 using System.Text;
+using Stuff.Vendas.Api.ViewModels;
 
 namespace Stuff.Vendas.Api.Configurations
 {
@@ -18,14 +20,16 @@ namespace Stuff.Vendas.Api.Configurations
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("IdentityConnection")));
 
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders()
                 .AddErrorDescriber<IdentityMensagensPortugues>();
-
+       
             var appSettingsSection = configuration.GetSection("AppSettings");
+            var authMessageSenderSection = configuration.GetSection("AuthMessageSenderOptions");
 
+            services.Configure<AuthMessageSenderOptions>(authMessageSenderSection);
             services.Configure<AppSettings>(appSettingsSection);
 
             var appSettings = appSettingsSection.Get<AppSettings>();
@@ -50,6 +54,8 @@ namespace Stuff.Vendas.Api.Configurations
                     ValidIssuer = appSettings.Emissor
                 };
             });
+
+        
 
             return services;
         }

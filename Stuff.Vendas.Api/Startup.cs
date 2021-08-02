@@ -12,6 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Stuff.Vendas.Api.Configurations;
+using Stuff.Vendas.Api.Controllers;
+using Stuff.Vendas.Api.ViewModels;
+using Stuff.Vendas.Domain.Interfaces;
 
 namespace Stuff.Vendas.Api
 {
@@ -27,7 +30,10 @@ namespace Stuff.Vendas.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+        
+
             services.IdentityConfig(Configuration);
+            services.AddTransient<IEmailSender, EmailSender>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
