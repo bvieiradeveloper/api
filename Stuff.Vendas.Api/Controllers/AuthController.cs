@@ -10,6 +10,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.WebUtilities;
+using Stuff.Vendas.Domain.Interfaces;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace Stuff.Vendas.Api.Controllers
@@ -21,11 +23,13 @@ namespace Stuff.Vendas.Api.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly AppSettings _appSettings;
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,IOptions<AppSettings> appSettings)
+        private readonly IEmailSender _sender;
+        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,IOptions<AppSettings> appSettings, IEmailSender sender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _appSettings = appSettings.Value;
+            _sender = sender;
         }
 
         [HttpPost("nova-conta")]
@@ -37,26 +41,44 @@ namespace Stuff.Vendas.Api.Controllers
             {
                 UserName = registerViewModel.Email,
                 Email = registerViewModel.Email,
-                EmailConfirmed = true
+                EmailConfirmed = false
             };
 
             var result = await _userManager.CreateAsync(user, registerViewModel.Password);
+
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, isPersistent: true);
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmationLink = Url.Action(nameof(ConfirmEmail), "Auth", new { token, email = user.Email }, Request.Scheme);
+
+
+                await _sender.SendEmailAsync("bruno.deveng@gmail.com", "Confirmation email link", confirmationLink);
                 return Ok(GerarJWT(registerViewModel.Email));
             }
 
             return BadRequest(result.Errors);
         }
-        [Authorize]
+
+        [HttpGet("confirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user is null) return NotFound(new {Sucess = "Usuário não encontrado"});
+
+            await _userManager.ConfirmEmailAsync(user, token);
+
+            return Ok(new{Sucess = "Confirmação realizada com sucesso"});
+        }
+
+
         [HttpPost("entrar")]
         public async Task<IActionResult> Entrar(LoginViewModel loginViewModel)
         {
             if (!ModelState.IsValid) return BadRequest();
 
             var result = await _signInManager.PasswordSignInAsync(loginViewModel.Email, loginViewModel.Password, false, true);
-
+            
             if (result.Succeeded)
             {
                 return Ok(loginViewModel);

@@ -69,3 +69,6 @@ C:\Users\Bruno\source\repos\StuffApi\src\Stuff.Vendas.Api\Stuff.Vendas.Api\bin\D
 C:\Users\Bruno\source\repos\StuffApi\src\Stuff.Vendas.Api\Stuff.Vendas.Api\bin\Debug\net5.0\Microsoft.AspNetCore.Identity.UI.dll
 C:\Users\Bruno\source\repos\StuffApi\src\Stuff.Vendas.Api\Stuff.Vendas.Api\bin\Debug\net5.0\Microsoft.Extensions.FileProviders.Embedded.dll
 C:\Users\Bruno\source\repos\StuffApi\src\Stuff.Vendas.Api\Stuff.Vendas.Api\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Bruno\source\repos\StuffApi\src\Stuff.Vendas.Api\Stuff.Vendas.Api\bin\Debug\net5.0\Newtonsoft.Json.dll
+C:\Users\Bruno\source\repos\StuffApi\src\Stuff.Vendas.Api\Stuff.Vendas.Api\bin\Debug\net5.0\SendGrid.dll
+C:\Users\Bruno\source\repos\StuffApi\src\Stuff.Vendas.Api\Stuff.Vendas.Api\bin\Debug\net5.0\StarkbankEcdsa.dll
